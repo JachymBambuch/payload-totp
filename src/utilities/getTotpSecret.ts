@@ -1,14 +1,19 @@
-import type { Payload, User } from 'payload'
+import type { Payload, PayloadRequest, User } from 'payload'
+
+// Symbol to track recursion in request context
+const TOTP_FETCHING_SECRET = Symbol.for('payload-totp-fetching-secret')
 
 type Args = {
 	collection: string
 	payload: Payload
+	req?: PayloadRequest
 	user: User
 }
 
 export async function getTotpSecret({
 	collection,
 	payload,
+	req,
 	user,
 }: Args): Promise<string | undefined> {
 	if (!user) {
@@ -18,9 +23,15 @@ export async function getTotpSecret({
 	let totpSecret: string | undefined
 
 	try {
+		// Create context with recursion guard
+		const context = req?.context
+			? { ...req.context, [TOTP_FETCHING_SECRET]: true }
+			: { [TOTP_FETCHING_SECRET]: true }
+
 		const result = (await payload.findByID({
 			id: user.id,
 			collection,
+			context,
 			overrideAccess: true,
 			select: {
 				totpSecret: true,

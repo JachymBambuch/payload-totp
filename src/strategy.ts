@@ -40,6 +40,11 @@ export const strategy: AuthStrategy = {
 		)
 
 		if (!originalStrategy) {
+			// Debug: log available strategies to find naming mismatch
+			console.warn(
+				`[payload-totp] originalStrategy "${originalStrategyName}" not found. Available strategies:`,
+				payload.authStrategies.map((s) => s.name),
+			)
 			return {
 				user: null,
 			}
@@ -55,6 +60,10 @@ export const strategy: AuthStrategy = {
 				},
 			}
 		} else {
+			// Debug: log user ID mismatch
+			console.warn(
+				`[payload-totp] User ID mismatch. Expected: "${userId}", got: "${originalStrategyResult.user?.id}"`,
+			)
 			return {
 				user: null,
 			}

@@ -19,6 +19,7 @@ type Args = {
 
 export default function OTPForm({ apiRoute, back, length, secret, serverURL }: Args) {
 	const [isPending, setIsPending] = useState(false)
+	const [isRedirecting, setIsRedirecting] = useState(false)
 	const form = useRef<HTMLFormElement>(null)
 
 	const onFilled = () => {
@@ -62,11 +63,17 @@ export default function OTPForm({ apiRoute, back, length, secret, serverURL }: A
 			asyncOperation(event)
 				.then((ok) => {
 					if (ok) {
-						if (back) {
-							location.replace(back)
-						} else {
-							window.history.back()
-						}
+						// Prevent multiple redirects
+						if (isRedirecting) return
+						setIsRedirecting(true)
+
+						// Determine safe redirect URL
+						// Avoid redirecting back to setup-totp to prevent loops
+						const isBackSafe = back && !back.includes('/setup-totp')
+						const redirectUrl = isBackSafe ? back : apiRoute.replace('/api', '')
+
+						// Use location.replace to ensure auth strategy runs again
+						location.replace(redirectUrl)
 					}
 					setIsPending(false)
 				})
@@ -77,7 +84,7 @@ export default function OTPForm({ apiRoute, back, length, secret, serverURL }: A
 					setIsPending(false)
 				})
 		},
-		[back, asyncOperation],
+		[back, asyncOperation, apiRoute, isRedirecting],
 	)
 
 	return (

@@ -41,6 +41,7 @@ export function removeEndpointHandler(pluginOptions: PayloadTOTPConfig) {
 		const totpSecret = await getTotpSecret({
 			collection: pluginOptions.collection,
 			payload,
+			req,
 			user,
 		})
 

@@ -10,6 +10,9 @@ type Args = {
 }
 
 export async function setCookie({ authConfig, cookiePrefix, secret, user }: Args) {
+	// Debug: log the strategy being saved
+	console.log(`[payload-totp] Setting cookie with originalStrategy: "${(<any>user)._strategy}"`)
+
 	const token = jwt.sign(
 		{
 			originalStrategy: (<any>user)._strategy,

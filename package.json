@@ -1,5 +1,5 @@
 {
-	"name": "payload-totp",
+	"name": "@m21cz/payload-totp",
 	"version": "3.0.0",
 	"description": "Add an extra security layer to PayloadCMS using a Time-based One-time Password (TOTP).",
 	"license": "MIT",
@@ -130,6 +130,7 @@
 		]
 	},
 	"publishConfig": {
+		"access": "public",
 		"exports": {
 			".": {
 				"import": "./dist/index.js",

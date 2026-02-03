@@ -43,6 +43,7 @@ export function verifyToken(pluginOptions: PayloadTOTPConfig) {
 		const totpSecret = await getTotpSecret({
 			collection: pluginOptions.collection,
 			payload,
+			req,
 			user,
 		})
 
